@@ -7,5 +7,6 @@ sealed class ApplicationEvent {
     object NotNavToHome: ApplicationEvent()
     data class AddApplication(val application: Application): ApplicationEvent()
     data class SelectApplication(val application: Application): ApplicationEvent()
+    object SelectRiskAnalysis: ApplicationEvent()
     object ExtractApplicationList: ApplicationEvent()
 }

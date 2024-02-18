@@ -29,8 +29,8 @@ object AppModule {
     fun providesApplicationDatabase(@ApplicationContext app: Context): ApplicationDatabase {
         return Room.databaseBuilder(
             app,
-            ApplicationDatabase::class.java, "application-database"
-        ).build()
+            ApplicationDatabase::class.java, "application-db"
+        ).fallbackToDestructiveMigration().build()
     }
 
     @Provides

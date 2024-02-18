@@ -137,6 +137,28 @@ private fun content() {
             val state = applicationViewModel.state.value
             AppliedTechniqueScreen(onNavigate = { screen ->
                 navigate(navHostController = navController, destination = screen)
+            }, applicationState = state, onRiskAnalysisSelect = {
+                applicationViewModel.onEvent(
+                    ApplicationEvent.SelectRiskAnalysis
+                )
+            })
+        }
+        composable(MainDestinations.DescriptionAnalysis.route) {
+            val state = applicationViewModel.state.value
+            DescriptionAnalysisScreen(onNavigate = { screen ->
+                navigate(navHostController = navController, destination = screen)
+            }, applicationState = state)
+        }
+        composable(MainDestinations.PrivacyPoliciesSummary.route) {
+            val state = applicationViewModel.state.value
+            PrivacyPoliciesSummaryScreen(onNavigate = { screen ->
+                navigate(navHostController = navController, destination = screen)
+            }, applicationState = state)
+        }
+        composable(MainDestinations.RiskAnalysis.route) {
+            val state = applicationViewModel.state.value
+            RiskAnalysisScreen(onNavigate = { screen ->
+                navigate(navHostController = navController, destination = screen)
             }, applicationState = state)
         }
     }

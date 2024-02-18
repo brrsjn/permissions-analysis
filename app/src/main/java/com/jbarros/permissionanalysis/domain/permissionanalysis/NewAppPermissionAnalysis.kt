@@ -53,7 +53,11 @@ class NewAppPermissionAnalysis @Inject constructor(
                     if (permissionIDByrepo == 0) {
                         val permissionGroup =
                             packageManagerSource.getPermissionGroup(rP) ?: "no-group"
-                        val dangerousGroup = dangerousGroupRepository.getOne(permissionGroup)
+                        var dangerousGroup = dangerousGroupRepository.getOne(permissionGroup)
+                        if (dangerousGroup == null) {
+                            dangerousGroupRepository.insert(permissionGroup)
+                            dangerousGroup = dangerousGroupRepository.getOne(permissionGroup)
+                        }
                         val categoryName = sensitivePermissionInfo.getCategory(rP) ?: "no-category"
 
                         val sensitiveDataCategoryItem =
@@ -110,7 +114,11 @@ class NewAppPermissionAnalysis @Inject constructor(
                     if (permissionIDByrepo == 0) {
                         val permissionGroup =
                             packageManagerSource.getPermissionGroup(rP) ?: "no-group"
-                        val dangerousGroup = dangerousGroupRepository.getOne(permissionGroup)
+                        var dangerousGroup = dangerousGroupRepository.getOne(permissionGroup)
+                        if (dangerousGroup == null) {
+                            dangerousGroupRepository.insert(permissionGroup)
+                            dangerousGroup = dangerousGroupRepository.getOne(permissionGroup)
+                        }
                         val categoryName = sensitivePermissionInfo.getCategory(rP) ?: "no-category"
 
                         val sensitiveDataCategoryItem =

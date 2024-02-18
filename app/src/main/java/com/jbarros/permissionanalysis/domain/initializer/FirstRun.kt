@@ -31,6 +31,8 @@ class FirstRun @Inject constructor(
 
         sensitiveDataCategoryRepository.insert("no-category")
 
+        dangerousGroupRepository.insert("no-group")
+
         //Llenar DangeroudGroupId
 
         val groupsCreated = mutableListOf<String>()

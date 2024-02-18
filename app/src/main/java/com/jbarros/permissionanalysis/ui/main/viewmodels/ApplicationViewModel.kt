@@ -1,5 +1,6 @@
 package com.jbarros.permissionanalysis.ui.main.viewmodels
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -10,6 +11,7 @@ import com.jbarros.permissionanalysis.domain.applicationpermission.GetApplicatio
 import com.jbarros.permissionanalysis.domain.applications.GetApplications
 import com.jbarros.permissionanalysis.domain.model.Application
 import com.jbarros.permissionanalysis.domain.permissionanalysis.GetPermissionAnalysis
+import com.jbarros.permissionanalysis.domain.riskAnalysis.GetSensitiveDataCategoryAndPermission
 import com.jbarros.permissionanalysis.ui.main.interaction.ApplicationEvent
 import com.jbarros.permissionanalysis.ui.main.interaction.ApplicationState
 import com.jbarros.permissionanalysis.utils.PackageManagerSource
@@ -24,8 +26,8 @@ class ApplicationViewModel @Inject constructor(
     private val getApplications: GetApplications,
     private val packageManagerSource: PackageManagerSource,
     private val getPermissionAnalysis: GetPermissionAnalysis,
-    private val getApplicationPermissionByApp: GetApplicationPermissionByApp
-
+    private val getApplicationPermissionByApp: GetApplicationPermissionByApp,
+    private val getSensitiveDataCategoryAndPermission: GetSensitiveDataCategoryAndPermission
 ) : ViewModel() {
     private val _state: MutableState<ApplicationState> = mutableStateOf(ApplicationState())
     val state: State<ApplicationState> get() = _state
@@ -56,6 +58,21 @@ class ApplicationViewModel @Inject constructor(
                 newAnalysis()
                 collectApplications()
 
+            }
+            is ApplicationEvent.SelectRiskAnalysis -> {
+                onSelectRiskAnalysis()
+            }
+        }
+    }
+
+    private fun onSelectRiskAnalysis() {
+        // Iniciar hilo secundario
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d(TAG, "onSelectRiskAnalysis: Entrando al metodo")
+            var fetchedApplication = getSensitiveDataCategoryAndPermission.invoke(_state.value.selectedApplication.id)
+            Log.d(TAG, "onSelectRiskAnalysis: Entrando al metodo")
+            withContext(Dispatchers.Main) {
+                _state.value = _state.value.copy(selectedSensitiveDataCategoryAndPermission = fetchedApplication)
             }
         }
     }

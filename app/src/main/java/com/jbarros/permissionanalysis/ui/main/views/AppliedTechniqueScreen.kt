@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
+import com.jbarros.permissionanalysis.domain.model.Application
 import com.jbarros.permissionanalysis.ui.components.ApplicationDetailComponent
 import com.jbarros.permissionanalysis.ui.components.ApplicationPermissionList
 import com.jbarros.permissionanalysis.ui.components.PermissionList
@@ -39,6 +40,7 @@ import com.jbarros.permissionanalysis.ui.main.interaction.ApplicationState
 fun AppliedTechniqueScreen(
     onNavigate: (MainDestinations) -> Unit,
     applicationState: ApplicationState,
+    onRiskAnalysisSelect: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -89,7 +91,7 @@ fun AppliedTechniqueScreen(
 
             // Botón básico
             Button(
-                onClick = {},
+                onClick = {onNavigate(MainDestinations.RiskAnalysis);onRiskAnalysisSelect()},
                 modifier = Modifier
                     .padding(8.dp)
             ) {
@@ -98,7 +100,7 @@ fun AppliedTechniqueScreen(
 
             // Botón básico
             Button(
-                onClick = {},
+                onClick = {onNavigate(MainDestinations.DescriptionAnalysis)},
                 modifier = Modifier
                     .padding(8.dp)
             ) {
@@ -107,7 +109,7 @@ fun AppliedTechniqueScreen(
 
             // Botón básico
             Button(
-                onClick = {},
+                onClick = {onNavigate(MainDestinations.PrivacyPoliciesSummary)},
                 modifier = Modifier
                     .padding(8.dp)
             ) {
