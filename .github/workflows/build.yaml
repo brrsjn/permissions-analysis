@@ -31,5 +31,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Run Kotlin Linter
+        run: ./gradlew app:ktlintCheck --info
+
       - name: Run specific unit tests
-        run: ./gradlew test --tests com.jbarros.permissionanalysis.RiskCalculatorTest
+        run: ./gradlew test com.jbarros.permissionanalysis.RiskCalculatorTest
