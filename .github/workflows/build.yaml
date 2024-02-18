@@ -32,5 +32,5 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Run specific unit tests
-        run: ./gradlew test --tests "com.jbarros.permissionanalysis.RiskCalculatorTest"
+        run: ./gradlew app:test --tests com.jbarros.permissionanalysis.RiskCalculatorTest
 
