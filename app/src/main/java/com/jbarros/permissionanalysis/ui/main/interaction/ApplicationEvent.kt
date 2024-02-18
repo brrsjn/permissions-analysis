@@ -9,4 +9,6 @@ sealed class ApplicationEvent {
     data class SelectApplication(val application: Application): ApplicationEvent()
     object SelectRiskAnalysis: ApplicationEvent()
     object ExtractApplicationList: ApplicationEvent()
+    object GetDescriptions: ApplicationEvent()
+    object GetPrivacyPolicies: ApplicationEvent()
 }

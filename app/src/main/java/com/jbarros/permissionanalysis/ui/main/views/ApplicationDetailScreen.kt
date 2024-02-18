@@ -32,6 +32,7 @@ import androidx.core.graphics.drawable.toBitmap
 import com.jbarros.permissionanalysis.ui.components.ApplicationDetailComponent
 import com.jbarros.permissionanalysis.ui.components.ApplicationPermissionList
 import com.jbarros.permissionanalysis.ui.components.PermissionList
+import com.jbarros.permissionanalysis.ui.main.LoadingScreen
 import com.jbarros.permissionanalysis.ui.main.MainDestinations
 import com.jbarros.permissionanalysis.ui.main.interaction.ApplicationState
 
@@ -52,101 +53,106 @@ fun ApplicationDetailScreen(
             )
         }
     ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Row(
-                modifier = Modifier.padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically
+        if (!applicationState.loadingApplicationDetailScreen) {
+            LoadingScreen()
+        } else {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Image(
-                    bitmap = applicationState.selectedApplication.appIcon.toBitmap()
-                        .asImageBitmap(),
-                    contentDescription = null,
+                Row(
+                    modifier = Modifier.padding(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        bitmap = applicationState.selectedApplication.appIcon.toBitmap()
+                            .asImageBitmap(),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(70.dp)
+                            .padding(end = 10.dp)
+                    )
+                    Column(
+                        modifier = Modifier.weight(1f) // Esto permite que el texto ocupe todo el espacio disponible
+                    ) {
+                        Text(
+                            text = applicationState.selectedApplication.appName,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = applicationState.selectedApplication.packageName,
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+
+                // Botón básico
+                Button(
+                    onClick = {onNavigate(MainDestinations.AppliedTechnique)},
                     modifier = Modifier
-                        .size(70.dp)
-                        .padding(end = 10.dp)
-                )
-                Column(
-                    modifier = Modifier.weight(1f) // Esto permite que el texto ocupe todo el espacio disponible
+                        .padding(8.dp)
                 ) {
-                    Text(
-                        text = applicationState.selectedApplication.appName,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Text(
-                        text = applicationState.selectedApplication.packageName,
-                        maxLines = 3,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    Text("Ver técnicas aplicadas")
                 }
-            }
+                val context = LocalContext.current
 
-            // Botón básico
-            Button(
-                onClick = {onNavigate(MainDestinations.AppliedTechnique)},
-                modifier = Modifier
-                    .padding(8.dp)
-            ) {
-                Text("Ver técnicas aplicadas")
-            }
-            val context = LocalContext.current
-
-            // Botón básico
-            Button(
-                onClick = {openAppSettings(applicationState.selectedApplication.packageName, context)},
-                modifier = Modifier
-                    .padding(8.dp)
-            ) {
-                Text("ir a editar permisos")
-            }
-
-            var selectedTabIndex by remember { mutableStateOf(0) }
-
-            TabRow(
-                selectedTabIndex = selectedTabIndex,
-                modifier = Modifier.padding(10.dp),
-                backgroundColor = Color.White, // Color de fondo de la barra de pestañas
-                contentColor = Color.Blue, // Color del texto y de los iconos de la barra de pestañas
-                indicator = { tabPositions ->
-                    TabRowDefaults.Indicator(
-                        modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                        color = Color.White
-                    )
-                }
-            ) {
-                Tab(
-                    selected = selectedTabIndex == 0,
-                    onClick = { selectedTabIndex = 0 }
+                // Botón básico
+                Button(
+                    onClick = {openAppSettings(applicationState.selectedApplication.packageName, context)},
+                    modifier = Modifier
+                        .padding(8.dp)
                 ) {
-                    Text("Detalles de la App")
+                    Text("ir a editar permisos")
                 }
-                Tab(
-                    selected = selectedTabIndex == 1,
-                    onClick = { selectedTabIndex = 1 }
+
+                var selectedTabIndex by remember { mutableStateOf(0) }
+
+                TabRow(
+                    selectedTabIndex = selectedTabIndex,
+                    modifier = Modifier.padding(10.dp),
+                    backgroundColor = Color.White, // Color de fondo de la barra de pestañas
+                    contentColor = Color.Blue, // Color del texto y de los iconos de la barra de pestañas
+                    indicator = { tabPositions ->
+                        TabRowDefaults.Indicator(
+                            modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                            color = Color.White
+                        )
+                    }
                 ) {
-                    Text("Mostrar Permisos")
+                    Tab(
+                        selected = selectedTabIndex == 0,
+                        onClick = { selectedTabIndex = 0 }
+                    ) {
+                        Text("Detalles de la App")
+                    }
+                    Tab(
+                        selected = selectedTabIndex == 1,
+                        onClick = { selectedTabIndex = 1 }
+                    ) {
+                        Text("Mostrar Permisos")
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Contenido de la pantalla va aquí
+                // Puedes cambiar el contenido dependiendo de la pestaña seleccionada
+                when (selectedTabIndex) {
+                    0 -> ApplicationDetailComponent(
+                        applicationState.selectedApplication,
+                        applicationState.selectedPermissionAnalysis
+                    )
+                    1 -> ApplicationPermissionList(applicationPermissions = applicationState.selectedApplicationPermissions)
+                }
+
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Contenido de la pantalla va aquí
-            // Puedes cambiar el contenido dependiendo de la pestaña seleccionada
-            when (selectedTabIndex) {
-                0 -> ApplicationDetailComponent(
-                    applicationState.selectedApplication,
-                    applicationState.selectedPermissionAnalysis
-                )
-                1 -> ApplicationPermissionList(applicationPermissions = applicationState.selectedApplicationPermissions)
-            }
-
         }
+
     }
 
 }

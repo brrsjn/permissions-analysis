@@ -1,13 +1,13 @@
 package com.jbarros.permissionanalysis.data
 
-import com.jbarros.permissionanalysis.network.PermissionExtractInfoService
-import com.jbarros.permissionanalysis.network.model.PermissionExtractInfoResponse
+import com.jbarros.permissionanalysis.network.PermissionsAnalysisAPIService
+import com.jbarros.permissionanalysis.network.model.PermissionExtractInfoData
 import javax.inject.Inject
 
 class PermissionExtractInfoRepository @Inject constructor(
-    private val permissionExtractInfoService: PermissionExtractInfoService
+    private val permissionExtractInfoService: PermissionsAnalysisAPIService
 ) {
-    suspend fun getPermissionList(): List<PermissionExtractInfoResponse> {
-        return permissionExtractInfoService.getListPermission()
+    suspend fun getPermissionList(): List<PermissionExtractInfoData> {
+        return permissionExtractInfoService.getListPermission().data
     }
 }

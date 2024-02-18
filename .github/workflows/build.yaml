@@ -1,0 +1,29 @@
+name: Android Build and Lint
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - name: Build and test
+        run: ./gradlew build test
+
+      - name: Lint with ktlint
+        run: ./gradlew ktlintCheck
+
+      - name: Analyze with detekt
+        run: ./gradlew detekt

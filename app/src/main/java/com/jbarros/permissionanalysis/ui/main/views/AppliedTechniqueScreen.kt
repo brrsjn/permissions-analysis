@@ -41,6 +41,8 @@ fun AppliedTechniqueScreen(
     onNavigate: (MainDestinations) -> Unit,
     applicationState: ApplicationState,
     onRiskAnalysisSelect: () -> Unit,
+    onDescriptionsSelect: () -> Unit,
+    onPrivacyPoliciesSelect: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -100,7 +102,7 @@ fun AppliedTechniqueScreen(
 
             // Botón básico
             Button(
-                onClick = {onNavigate(MainDestinations.DescriptionAnalysis)},
+                onClick = {onNavigate(MainDestinations.DescriptionAnalysis);onDescriptionsSelect()},
                 modifier = Modifier
                     .padding(8.dp)
             ) {
@@ -109,7 +111,7 @@ fun AppliedTechniqueScreen(
 
             // Botón básico
             Button(
-                onClick = {onNavigate(MainDestinations.PrivacyPoliciesSummary)},
+                onClick = {onNavigate(MainDestinations.PrivacyPoliciesSummary);onPrivacyPoliciesSelect()},
                 modifier = Modifier
                     .padding(8.dp)
             ) {

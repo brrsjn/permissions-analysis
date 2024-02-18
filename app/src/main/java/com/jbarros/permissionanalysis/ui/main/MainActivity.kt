@@ -141,6 +141,14 @@ private fun content() {
                 applicationViewModel.onEvent(
                     ApplicationEvent.SelectRiskAnalysis
                 )
+            }, onDescriptionsSelect = {
+                applicationViewModel.onEvent(
+                    ApplicationEvent.GetDescriptions
+                )
+            }, onPrivacyPoliciesSelect = {
+                applicationViewModel.onEvent(
+                    ApplicationEvent.GetPrivacyPolicies
+                )
             })
         }
         composable(MainDestinations.DescriptionAnalysis.route) {

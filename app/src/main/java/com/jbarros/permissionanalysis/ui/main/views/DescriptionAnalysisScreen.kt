@@ -7,6 +7,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,70 +77,45 @@ fun DescriptionAnalysisScreen(
                 text = "Categorías de permisos sensibles\n" +
                         " concedidos "
             )
+            val descriptions = applicationState.applicationDescriptions
+            // Llamar a la función DescriptionsRow para cada propiedad de Descriptions
+            DescriptionsRow("Almacenamiento", descriptions.STORAGE)
+            DescriptionsRow("Contactos", descriptions.CONTACTS)
+            DescriptionsRow("Ubicación", descriptions.LOCATION)
+            DescriptionsRow("Cámara", descriptions.CAMERA)
+            DescriptionsRow("Microfono", descriptions.MICROPHONE)
+            DescriptionsRow("SMS", descriptions.SMS)
+            DescriptionsRow("Registro de llamadas", descriptions.CALL_LOG)
+            DescriptionsRow("Teléfono", descriptions.PHONE)
+            DescriptionsRow("Calendario", descriptions.CALENDAR)
+            DescriptionsRow("Configuraciones", descriptions.SETTINGS)
+            DescriptionsRow("Tareas", descriptions.TASKS)
 
-            var permisoPeligroso = mutableListOf<ApplicationPermission>()
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                //.background(Color.Gray)
-                ,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                // Primera columna con la mitad del ancho
-                Box(
-                    modifier = Modifier
-                        //.background(Color.Blue)
-                        .weight(1f)
-                ) {
-                    // Contenido de la primera columna
-                    Text("Categoria Sensible", modifier = Modifier.padding(16.dp))
-                }
-
-                // Segunda columna con la mitad del ancho
-                Box(
-                    modifier = Modifier
-                        //.background(Color.Green)
-                        .weight(1f)
-                ) {
-                    // Contenido de la segunda columna
-                    Text("Permisos", modifier = Modifier.padding(16.dp))
-                }
-            }
-            for (i in applicationState.selectedSensitiveDataCategoryAndPermission) {
-                if (i.sensitiveDataCategoryName != "no-category") {
-                    //Text(text = i.permissionName +" - "+ i.sensitiveDataCategoryName)
-                    // Row con dos columnas, cada una ocupando la mitad de la pantalla
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                        //.background(Color.Gray)
-                        ,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        // Primera columna con la mitad del ancho
-                        Box(
-                            modifier = Modifier
-                                //.background(Color.Blue)
-                                .weight(1f)
-                        ) {
-                            // Contenido de la primera columna
-                            Text(i.sensitiveDataCategoryName, modifier = Modifier.padding(16.dp))
-                        }
-
-                        // Segunda columna con la mitad del ancho
-                        Box(
-                            modifier = Modifier
-                                //.background(Color.Green)
-                                .weight(1f)
-                        ) {
-                            // Contenido de la segunda columna
-                            Text(i.permissionName, modifier = Modifier.padding(16.dp))
-                        }
-                    }
-                }
-            }
         }
+    }
+}
+
+@Composable
+fun DescriptionsRow(descriptionName: String, isChecked: Boolean) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        // Etiqueta de la descripción
+        Text(
+            text = descriptionName,
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 8.dp),
+            style = MaterialTheme.typography.body1
+        )
+
+        // Icono de verificación o desmarcado
+        Icon(
+            imageVector = if (isChecked) Icons.Default.Check else Icons.Default.Close,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp)
+        )
     }
 }

@@ -1,10 +1,11 @@
 package com.jbarros.permissionanalysis.ui.main.views
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -12,13 +13,14 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.graphics.drawable.toBitmap
-import com.jbarros.permissionanalysis.domain.model.ApplicationPermission
 import com.jbarros.permissionanalysis.ui.main.MainDestinations
 import com.jbarros.permissionanalysis.ui.main.interaction.ApplicationState
 
@@ -75,75 +77,80 @@ fun PrivacyPoliciesSummaryScreen(
                 }
             }
             Text(
-                text = "Categorías de permisos sensibles\n" +
-                        " concedidos "
+                text = "Resumen de politica\n" +
+                        " de privacidad "
             )
+            val privacyPolicies = applicationState.applicationPrivacyPolicies
 
-            var permisoPeligroso = mutableListOf<ApplicationPermission>()
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                //.background(Color.Gray)
-                ,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                // Primera columna con la mitad del ancho
-                Box(
-                    modifier = Modifier
-                        //.background(Color.Blue)
-                        .weight(1f)
-                ) {
-                    // Contenido de la primera columna
-                    Text("Categoria Sensible", modifier = Modifier.padding(16.dp))
-                }
-
-                // Segunda columna con la mitad del ancho
-                Box(
-                    modifier = Modifier
-                        //.background(Color.Green)
-                        .weight(1f)
-                ) {
-                    // Contenido de la segunda columna
-                    Text("Permisos", modifier = Modifier.padding(16.dp))
-                }
+            if (privacyPolicies.link != "") {
+                OpenLinkInBrowser(privacyPolicies.link)
             }
-            for (i in applicationState.selectedSensitiveDataCategoryAndPermission) {
-                if (i.sensitiveDataCategoryName != "no-category") {
-                    //Text(text = i.permissionName +" - "+ i.sensitiveDataCategoryName)
-                    // Row con dos columnas, cada una ocupando la mitad de la pantalla
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                        //.background(Color.Gray)
-                        ,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        // Primera columna con la mitad del ancho
-                        Box(
-                            modifier = Modifier
-                                //.background(Color.Blue)
-                                .weight(1f)
-                        ) {
-                            // Contenido de la primera columna
-                            Text(i.sensitiveDataCategoryName, modifier = Modifier.padding(16.dp))
-                        }
 
-                        // Segunda columna con la mitad del ancho
-                        Box(
-                            modifier = Modifier
-                                //.background(Color.Green)
-                                .weight(1f)
-                        ) {
-                            // Contenido de la segunda columna
-                            Text(i.permissionName, modifier = Modifier.padding(16.dp))
-                        }
-                    }
-                }
-            }
+            PrivacyPolicyItem("Policy Introductory", privacyPolicies.policy_introductory)
+            PrivacyPolicyItem(
+                "First Party Collection and Use",
+                privacyPolicies.first_party_collection_and_use
+            )
+            PrivacyPolicyItem(
+                "Cookies and Similar Technologies",
+                privacyPolicies.cookies_and_similar_technologies
+            )
+            PrivacyPolicyItem("Data Retention", privacyPolicies.data_retention)
+            PrivacyPolicyItem(
+                "Third Party Share and Collection",
+                privacyPolicies.third_party_share_and_collection
+            )
+            PrivacyPolicyItem("Data Security", privacyPolicies.data_security)
+            PrivacyPolicyItem(
+                "International Data Transfer",
+                privacyPolicies.international_data_transfer
+            )
+            PrivacyPolicyItem(
+                "User Right and Control",
+                privacyPolicies.user_right_and_control
+            )
+            PrivacyPolicyItem("Specific Audiences", privacyPolicies.specific_audiences)
+            PrivacyPolicyItem("Policy Change", privacyPolicies.policy_change)
+            PrivacyPolicyItem(
+                "Policy Contact Information",
+                privacyPolicies.policy_contact_information
+            )
+            // Agrega más elementos según sea necesario
 
 
         }
+
+
     }
 }
+
+@Composable
+fun OpenLinkInBrowser(link: String) {
+    val context = LocalContext.current
+
+    Button(
+        onClick = {
+            // Utilizar un Intent para abrir el enlace en el navegador
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
+            startActivity(context, intent, null)
+        },
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+    ) {
+        Text(text = "Abrir politica de privacidad")
+    }
+}
+
+@Composable
+fun PrivacyPolicyItem(title: String, content: String) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Text(text = title, style = MaterialTheme.typography.h6)
+        Text(text = content, style = MaterialTheme.typography.body1)
+    }
+}
+

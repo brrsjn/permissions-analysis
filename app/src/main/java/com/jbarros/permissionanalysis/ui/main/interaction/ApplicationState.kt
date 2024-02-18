@@ -1,9 +1,6 @@
 package com.jbarros.permissionanalysis.ui.main.interaction
 
-import com.jbarros.permissionanalysis.domain.model.Application
-import com.jbarros.permissionanalysis.domain.model.ApplicationPermission
-import com.jbarros.permissionanalysis.domain.model.PermissionAnalysis
-import com.jbarros.permissionanalysis.domain.model.PermissionInfo
+import com.jbarros.permissionanalysis.domain.model.*
 import com.jbarros.permissionanalysis.domain.riskAnalysis.GetSensitiveDataCategoryAndPermission
 
 data class ApplicationState(
@@ -12,5 +9,8 @@ data class ApplicationState(
     var selectedApplication: Application = Application(),
     var selectedPermissionAnalysis: PermissionAnalysis = PermissionAnalysis(),
     var selectedApplicationPermissions: List<ApplicationPermission> = emptyList(),
-    var selectedSensitiveDataCategoryAndPermission: List<PermissionInfo> = emptyList()
+    var selectedSensitiveDataCategoryAndPermission: List<PermissionInfo> = emptyList(),
+    var applicationDescriptions: Descriptions = Descriptions(),
+    var applicationPrivacyPolicies: PrivacyPolicies = PrivacyPolicies(),
+    var loadingApplicationDetailScreen: Boolean = false,
     )

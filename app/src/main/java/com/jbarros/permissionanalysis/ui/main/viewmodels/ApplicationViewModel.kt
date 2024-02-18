@@ -9,8 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jbarros.permissionanalysis.domain.applicationpermission.GetApplicationPermissionByApp
 import com.jbarros.permissionanalysis.domain.applications.GetApplications
+import com.jbarros.permissionanalysis.domain.descriptions.GetDescriptions
 import com.jbarros.permissionanalysis.domain.model.Application
 import com.jbarros.permissionanalysis.domain.permissionanalysis.GetPermissionAnalysis
+import com.jbarros.permissionanalysis.domain.privacyPolicies.GetPrivacyPolicies
 import com.jbarros.permissionanalysis.domain.riskAnalysis.GetSensitiveDataCategoryAndPermission
 import com.jbarros.permissionanalysis.ui.main.interaction.ApplicationEvent
 import com.jbarros.permissionanalysis.ui.main.interaction.ApplicationState
@@ -27,7 +29,9 @@ class ApplicationViewModel @Inject constructor(
     private val packageManagerSource: PackageManagerSource,
     private val getPermissionAnalysis: GetPermissionAnalysis,
     private val getApplicationPermissionByApp: GetApplicationPermissionByApp,
-    private val getSensitiveDataCategoryAndPermission: GetSensitiveDataCategoryAndPermission
+    private val getSensitiveDataCategoryAndPermission: GetSensitiveDataCategoryAndPermission,
+    private val getDescriptions: GetDescriptions,
+    private val getPrivacyPolicies: GetPrivacyPolicies
 ) : ViewModel() {
     private val _state: MutableState<ApplicationState> = mutableStateOf(ApplicationState())
     val state: State<ApplicationState> get() = _state
@@ -62,6 +66,12 @@ class ApplicationViewModel @Inject constructor(
             is ApplicationEvent.SelectRiskAnalysis -> {
                 onSelectRiskAnalysis()
             }
+            is ApplicationEvent.GetDescriptions -> {
+                onSelectDescriptions()
+            }
+            is ApplicationEvent.GetPrivacyPolicies -> {
+                onSelectPrivacyPolicies()
+            }
         }
     }
 
@@ -69,10 +79,12 @@ class ApplicationViewModel @Inject constructor(
         // Iniciar hilo secundario
         viewModelScope.launch(Dispatchers.IO) {
             Log.d(TAG, "onSelectRiskAnalysis: Entrando al metodo")
-            var fetchedApplication = getSensitiveDataCategoryAndPermission.invoke(_state.value.selectedApplication.id)
+            var fetchedApplication =
+                getSensitiveDataCategoryAndPermission.invoke(_state.value.selectedApplication.id)
             Log.d(TAG, "onSelectRiskAnalysis: Entrando al metodo")
             withContext(Dispatchers.Main) {
-                _state.value = _state.value.copy(selectedSensitiveDataCategoryAndPermission = fetchedApplication)
+                _state.value =
+                    _state.value.copy(selectedSensitiveDataCategoryAndPermission = fetchedApplication)
             }
         }
     }
@@ -81,7 +93,9 @@ class ApplicationViewModel @Inject constructor(
         // Iniciar hilo secundario
         viewModelScope.launch(Dispatchers.IO) {
             var fetchedApplication = getApplications.invoke()
-            fetchedApplication.map { it.appIcon = packageManagerSource.getAppDrawable(it.packageName) }
+            fetchedApplication.map {
+                it.appIcon = packageManagerSource.getAppDrawable(it.packageName)
+            }
             withContext(Dispatchers.Main) {
                 _state.value = _state.value.copy(applications = fetchedApplication)
             }
@@ -106,22 +120,30 @@ class ApplicationViewModel @Inject constructor(
     private fun newAnalysis() {
         // Iniciar hilo secundario
         viewModelScope.launch(Dispatchers.IO) {
-            for(app in _state.value.applications) {
+            for (app in _state.value.applications) {
                 //newAppPermissionAnalysis(app)
             }
         }
     }
 
     private fun onSelectApplication(application: Application) {
+        _state.value = _state.value.copy(selectedApplication = application)
+
+        _state.value = _state.value.copy(loadingApplicationDetailScreen = false)
+
         // Iniciar hilo secundario
         viewModelScope.launch(Dispatchers.IO) {
             val applicationPermissionAnalysis = getPermissionAnalysis(application.id)
             val applicationPermission = getApplicationPermissionByApp(application.id)
             val filePath: String = application.apkPath
-            Log.d("APPLICATION", "Aplicacion seleccionada $filePath")            // Volver al hilo principal
-            _state.value = _state.value.copy(selectedApplication = application)
-            _state.value = _state.value.copy(selectedPermissionAnalysis = applicationPermissionAnalysis)
-            _state.value = _state.value.copy(selectedApplicationPermissions = applicationPermission)
+            Log.d("APPLICATION", "Aplicacion seleccionada $filePath")
+            withContext(Dispatchers.Main) {
+                _state.value =
+                    _state.value.copy(selectedPermissionAnalysis = applicationPermissionAnalysis)
+                _state.value =
+                    _state.value.copy(selectedApplicationPermissions = applicationPermission)
+                _state.value = _state.value.copy(loadingApplicationDetailScreen = true)
+            }// Volver al hilo principal
         }
     }
 
@@ -130,6 +152,28 @@ class ApplicationViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             //getInstalledApplications()
             collectApplications()
+        }
+    }
+
+    private fun onSelectDescriptions() {
+        // Iniciar hilo secundario
+        viewModelScope.launch(Dispatchers.IO) {
+            val descriptions = getDescriptions(state.value.selectedApplication.packageName)
+            withContext(Dispatchers.Main) {
+                _state.value =
+                    _state.value.copy(applicationDescriptions = descriptions)
+            }
+        }
+    }
+
+    private fun onSelectPrivacyPolicies() {
+        // Iniciar hilo secundario
+        viewModelScope.launch(Dispatchers.IO) {
+            val privacyPolicies = getPrivacyPolicies(state.value.selectedApplication.packageName)
+            withContext(Dispatchers.Main) {
+                _state.value =
+                    _state.value.copy(applicationPrivacyPolicies = privacyPolicies)
+            }
         }
     }
 }

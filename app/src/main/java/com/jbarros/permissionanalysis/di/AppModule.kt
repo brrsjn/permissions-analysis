@@ -3,7 +3,7 @@ package com.jbarros.permissionanalysis.di
 import android.content.Context
 import androidx.room.Room
 import com.jbarros.permissionanalysis.data.local.*
-import com.jbarros.permissionanalysis.network.PermissionExtractInfoService
+import com.jbarros.permissionanalysis.network.PermissionsAnalysisAPIService
 import com.jbarros.permissionanalysis.utils.PackageManagerSource
 import com.jbarros.permissionanalysis.utils.RiskCalculator
 import com.jbarros.permissionanalysis.utils.SensitivePermissionInfo
@@ -35,8 +35,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesRetrofitPermissionExtractInfoService(): PermissionExtractInfoService {
-        val baseUrl = "https://j18oacr9jc.execute-api.us-east-1.amazonaws.com"
+    fun providesRetrofitPermissionExtractInfoService(): PermissionsAnalysisAPIService {
+        val baseUrl = "http://3.87.232.163/api/"
         val moshi = Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()
@@ -57,7 +57,7 @@ object AppModule {
             .client(okHttpClient)
             .build()
 
-        return retrofit.create(PermissionExtractInfoService::class.java)
+        return retrofit.create(PermissionsAnalysisAPIService::class.java)
     }
 
     @Provides
