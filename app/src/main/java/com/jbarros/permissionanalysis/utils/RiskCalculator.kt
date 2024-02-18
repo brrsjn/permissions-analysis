@@ -30,7 +30,7 @@ class RiskCalculator() {
         // Agregar más permisos si son necesarios
     )
 
-    fun calculateRisk(grantedPermission: List<String>, dangerousPermissions: List<String>, isRequested: Boolean): Int {
+    fun calculateRisk(grantedPermission: List<String>): Int {
         val hasInternet = grantedPermission.contains(android.Manifest.permission.INTERNET)
 
         val hasSendSms = grantedPermission.contains(android.Manifest.permission.SEND_SMS)
@@ -43,10 +43,6 @@ class RiskCalculator() {
             val permissionInfo = getPermissionInfo(grantedPermissionElement)
             if (permissionInfo != null) {
                 hasDangerousPermission = true
-                if (isRequested) {
-                    println("Permiso peligroso: ${permissionInfo.permissionName} (Categoría: ${permissionInfo.category})")
-                }
-                //break
             }
         }
 
