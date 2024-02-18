@@ -99,10 +99,10 @@ class NewAppPermissionAnalysisNoCoroutine @Inject constructor(
             }
         }
         val dangerousPermissions = permissionRepository.getDangerous().map { it.constantName }
-        val riskValue = riskValueCalculator.calculateRisk(grantedPermission, dangerousPermissions, false)
+        val riskValue = riskValueCalculator.calculateRisk(grantedPermission)
         println("El siguiente informe es para la aplicacion: ${application.appName})")
         val riskValueRequested =
-            riskValueCalculator.calculateRisk(requestedPermission, dangerousPermissions, true)
+            riskValueCalculator.calculateRisk(requestedPermission)
         var createdAt = dateProvider.getDateTime()
         val permissionAnalysis = PermissionAnalysis(
             applicationUid = application.id,
