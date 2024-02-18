@@ -18,6 +18,9 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
 
+      - name: Set execute permissions for gradlew
+        run: chmod +x ./gradlew
+
       - name: Cache Gradle dependencies
         uses: actions/cache@v2
         with:
