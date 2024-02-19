@@ -1,5 +1,7 @@
 package com.jbarros.permissionanalysis.utils
 
+import android.util.Log
+
 
 class RiskCalculator() {
 
@@ -31,7 +33,7 @@ class RiskCalculator() {
     )
 
     fun calculateRisk(grantedPermission: List<String>): Int {
-        val hasInternet = grantedPermission.contains(android.Manifest.permission.INTERNET)
+        val hasInternet = grantedPermission.contains("android.permission.INTERNET")
 
         val hasSendSms = grantedPermission.contains(android.Manifest.permission.SEND_SMS)
         val hasBluetooth = grantedPermission.contains(android.Manifest.permission.BLUETOOTH)
@@ -40,7 +42,9 @@ class RiskCalculator() {
         var hasDangerousPermission = false
 
         for (grantedPermissionElement in grantedPermission) {
+            print(grantedPermissionElement)
             val permissionInfo = getPermissionInfo(grantedPermissionElement)
+            print(permissionInfo)
             if (permissionInfo != null) {
                 hasDangerousPermission = true
             }

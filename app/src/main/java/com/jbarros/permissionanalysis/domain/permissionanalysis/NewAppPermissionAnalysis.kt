@@ -147,7 +147,6 @@ class NewAppPermissionAnalysis @Inject constructor(
                 }
             }
         }
-        val dangerousPermissions = permissionRepository.getDangerous().map { it.constantName }
         val riskValue =
             riskValueCalculator.calculateRisk(grantedPermission)
         println("El siguiente informe es para la aplicacion: ${application.appName})")

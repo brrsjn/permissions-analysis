@@ -4,7 +4,7 @@ import com.jbarros.permissionanalysis.utils.RiskCalculator
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class RiskCalculatorTest {
+class RiskCalculatorTest() {
 
     private val riskCalculator = RiskCalculator()
     val dangerousPermissions = listOf(
@@ -60,11 +60,13 @@ class RiskCalculatorTest {
             "android.permission.INTERNET",
             "android.permission.SEND_SMS",
             "android.permission.BLUETOOTH",
-            "android.permission.NFC"
+            "android.permission.NFC",
+            "android.permission.ACCESS_FINE_LOCATION"
         )
 
         // Act
         val risk = riskCalculator.calculateRisk(grantedPermissions)
+        print(risk)
 
         // Assert
         assertEquals(5, risk)
@@ -75,12 +77,13 @@ class RiskCalculatorTest {
         // Arrange
         val grantedPermissions = listOf(
             "android.permission.INTERNET",
-            "android.permission.SEND_SMS"
+            "android.permission.SEND_SMS",
+            "android.permission.ACCESS_FINE_LOCATION"
         )
 
         // Act
         val risk = riskCalculator.calculateRisk(grantedPermissions)
-
+        print(risk)
         // Assert
         assertEquals(4, risk)
     }
@@ -90,11 +93,12 @@ class RiskCalculatorTest {
         // Arrange
         val grantedPermissions = listOf(
             "android.permission.BLUETOOTH",
-            "android.permission.NFC"
+            "android.permission.NFC",
+            "android.permission.ACCESS_FINE_LOCATION"
         )
 
         // Act
-        val risk = riskCalculator.calculateRisk(grantedPermissions)
+        var risk = riskCalculator.calculateRisk(grantedPermissions)
 
         // Assert
         assertEquals(3, risk)
@@ -104,7 +108,7 @@ class RiskCalculatorTest {
     fun calculateRisk_onlyDangerousPermissions_granted() {
         // Arrange
         val grantedPermissions = listOf(
-            "android.permission.SEND_SMS"
+            "android.permission.ACCESS_FINE_LOCATION"
         )
 
         // Act
@@ -118,7 +122,7 @@ class RiskCalculatorTest {
     fun calculateRisk_noDangerousPermissions_granted() {
         // Arrange
         val grantedPermissions = listOf(
-            "android.permission.ACCESS_FINE_LOCATION"
+            "android.permission.QUERY_ALL_PACKAGES"
         )
 
         // Act
@@ -128,5 +132,4 @@ class RiskCalculatorTest {
         assertEquals(0, risk)
     }
 
-    // You can continue writing more test cases to cover all your branches and scenarios...
 }
