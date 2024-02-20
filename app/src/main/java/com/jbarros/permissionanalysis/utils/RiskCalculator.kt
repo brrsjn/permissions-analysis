@@ -32,21 +32,22 @@ class RiskCalculator() {
         // Agregar más permisos si son necesarios
     )
 
-    fun calculateRisk(grantedPermission: List<String>): Int {
-        val hasInternet = grantedPermission.contains("android.permission.INTERNET")
+    fun calculateRisk(permissionList: List<String>): Int {
+        val hasInternet = permissionList.contains(android.Manifest.permission.INTERNET)
 
-        val hasSendSms = grantedPermission.contains(android.Manifest.permission.SEND_SMS)
-        val hasBluetooth = grantedPermission.contains(android.Manifest.permission.BLUETOOTH)
-        val hasNfc = grantedPermission.contains(android.Manifest.permission.NFC)
+        val hasSendSms = permissionList.contains(android.Manifest.permission.SEND_SMS)
+        val hasBluetooth = permissionList.contains(android.Manifest.permission.BLUETOOTH)
+        val hasNfc = permissionList.contains(android.Manifest.permission.NFC)
 
         var hasDangerousPermission = false
 
-        for (grantedPermissionElement in grantedPermission) {
-            print(grantedPermissionElement)
-            val permissionInfo = getPermissionInfo(grantedPermissionElement)
-            print(permissionInfo)
+        var dangerousPermissionCount = 0
+
+        for (permissionElement in permissionList) {
+            val permissionInfo = getPermissionInfo(permissionElement)
             if (permissionInfo != null) {
                 hasDangerousPermission = true
+                dangerousPermissionCount += 1
             }
         }
 
@@ -56,7 +57,7 @@ class RiskCalculator() {
             hasDangerousPermission && ((hasInternet || hasSendSms) && (hasBluetooth || hasNfc)) -> riskValue = 5
             hasDangerousPermission && (hasInternet || hasSendSms) -> riskValue = 4
             hasDangerousPermission && (hasBluetooth || hasNfc) -> riskValue = 3
-            hasDangerousPermission && grantedPermission.size > 1 -> riskValue = 2
+            hasDangerousPermission && dangerousPermissionCount > 1 -> riskValue = 2
             hasDangerousPermission -> riskValue = 1
         }
 
