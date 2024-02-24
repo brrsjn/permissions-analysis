@@ -27,7 +27,7 @@ fun PermissionCard(
         backgroundColor = MaterialTheme.colors.surface
     ) {
         Column(
-            modifier = Modifier.padding(1.dp) // Esto permite que el texto ocupe todo el espacio disponible
+            modifier = Modifier.padding(1.dp)
         ) {
             Text(
                 text = permission.constantName,

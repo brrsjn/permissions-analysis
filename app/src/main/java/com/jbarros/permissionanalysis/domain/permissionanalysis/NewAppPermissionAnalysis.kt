@@ -1,10 +1,7 @@
 package com.jbarros.permissionanalysis.domain.permissionanalysis
 
 import android.util.Log
-import com.jbarros.permissionanalysis.data.ApplicationPermissionRepository
-import com.jbarros.permissionanalysis.data.DangerousGroupRepository
-import com.jbarros.permissionanalysis.data.PermissionRepository
-import com.jbarros.permissionanalysis.data.SensitiveDataCategoryRepository
+import com.jbarros.permissionanalysis.data.*
 import com.jbarros.permissionanalysis.data.applications.PermissionAnalysisRepository
 
 import com.jbarros.permissionanalysis.data.model.PermissionEntity
@@ -24,10 +21,13 @@ class NewAppPermissionAnalysis @Inject constructor(
     private val dangerousGroupRepository: DangerousGroupRepository,
     private val sensitiveDataCategoryRepository: SensitiveDataCategoryRepository,
     private val packageManagerSource: PackageManagerSource,
-    private val sensitivePermissionInfo: SensitivePermissionInfo
+    private val sensitivePermissionInfo: SensitivePermissionInfo,
+    private val permissionChangeRepository: PermissionChangeRepository
 ) {
     //Pendiente: Revisar los permisos que yo habia guardado pero que ya no estan en la app
     suspend operator fun invoke(application: Application) {
+        Log.d("TESTANALYSIS", "Iniciando")
+
         val dateProvider = DateProvider()
 
         val grantedPermission =
@@ -35,9 +35,15 @@ class NewAppPermissionAnalysis @Inject constructor(
         val requestedPermission =
             permissionAnalysisRepository.getRequestedPermission(packageName = application.packageName)
 
+        Log.d("TESTANALYSIS", "grantedPermission: ${grantedPermission.size}")
+        Log.d("TESTANALYSIS", "requestedPermission: ${requestedPermission.size}")
+
         val permissionByApplicationId =
             applicationPermissionRepository.getAllPermissionByApplicationId(applicationId = application.id)
                 .map { it.toApplicationPermission() }
+
+        var isChangedPermission = false
+        var permissionChange = mutableListOf<PermissionChange>()
 
         if (permissionByApplicationId.isEmpty()) {
             Log.d("NEWPAPPPERMISSIONANAL", "Es vacio el permissionByApplicationId")
@@ -101,12 +107,19 @@ class NewAppPermissionAnalysis @Inject constructor(
                 var permissionId: Int
                 if (matchingPermission != null) {
                     permissionId = matchingPermission.toPermission().id
+                    Log.d("MATCHPERMISSION", "$permissionId")
                     var matchingApplicationPermission =
                         permissionByApplicationId.firstOrNull { it.permissionId == permissionId }
+                    Log.d("MATCHPERMISSION", "$matchingApplicationPermission")
                     if (matchingApplicationPermission != null) {
                         if (isGranted != matchingApplicationPermission.isGranted) {
+                            Log.d("TESTANALYSIS", "identifico cambio de permisos")
                             matchingApplicationPermission.isGranted = isGranted
                             applicationPermissionRepository.update(matchingApplicationPermission.toApplicationPermissionEntity())
+                            isChangedPermission =  true
+                            val permissionChangeElement = PermissionChange(newState = isGranted, createdAt = dateProvider.getDateTime(), applicationPermissionUid = matchingApplicationPermission.id)
+                            permissionChange.add(permissionChangeElement)
+                            //Dado que permission change necesita el Permission analysis id, entonces, esto se hará hasta abajo
                         }
                     }
                 } else {
@@ -161,7 +174,17 @@ class NewAppPermissionAnalysis @Inject constructor(
             riskScore = riskValue,
             riskScoreRequested = riskValueRequested
         )
-        permissionAnalysisRepository.insertPermissionAnalysis(permissionAnalysis.toPermissionAnalysisEntity())
+        val id =  permissionAnalysisRepository.insertPermissionAnalysis(permissionAnalysis.toPermissionAnalysisEntity())
+        Log.d("TESTANALYSIS", "Ojala imprima un id: $id")
+        if (isChangedPermission) {
+            Log.d("TESTANALYSIS", "hay cambio")
+            for (i in permissionChange) {
+                i.permissionAnalysisUid = id.toInt()
+                permissionChangeRepository.insert(i.toPermissionChangeEntity())
+                Log.d("TESTANALYSIS", "insertó un cambio")
+            }
+
+        }
 
         return
     }

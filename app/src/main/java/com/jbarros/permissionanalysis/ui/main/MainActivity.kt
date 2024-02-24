@@ -109,7 +109,20 @@ private fun content() {
             ApplicationDetailScreen(
                 onNavigate = { screen ->
                     navigate(navHostController = navController, destination = screen)
-                }, applicationState = state
+                }, applicationState = state, onSelectNewRiskAnalysis = {
+                    Log.d("APPLICATION", "En main activity")
+                    applicationViewModel.onEvent(
+                        ApplicationEvent.SelectNewRiskAnalysis
+                    )
+                }, onSelectPermissionChange = {
+                    applicationViewModel.onEvent(
+                        ApplicationEvent.SelectPermissionChange
+                    )
+                },onSelectPermissionView = {
+                    applicationViewModel.onEvent(
+                        ApplicationEvent.SelectPermissionView
+                    )
+                }
             )
         }
         composable(MainDestinations.PermissionsList.route) {
@@ -128,10 +141,10 @@ private fun content() {
             )
         }
         composable(MainDestinations.PermissionDetail.route) {
-            val state = permissionViewModel.state.value
+            val state = applicationViewModel.state.value
             PermissionDetailScreen(onNavigate = { screen ->
                 navigate(navHostController = navController, destination = screen)
-            }, permissionState = state)
+            }, applicationState = state)
         }
         composable(MainDestinations.AppliedTechnique.route) {
             val state = applicationViewModel.state.value
@@ -166,6 +179,12 @@ private fun content() {
         composable(MainDestinations.RiskAnalysis.route) {
             val state = applicationViewModel.state.value
             RiskAnalysisScreen(onNavigate = { screen ->
+                navigate(navHostController = navController, destination = screen)
+            }, applicationState = state)
+        }
+        composable(MainDestinations.PermissionsChange.route) {
+            val state = applicationViewModel.state.value
+            PermissionChangeScreen(onNavigate = { screen ->
                 navigate(navHostController = navController, destination = screen)
             }, applicationState = state)
         }

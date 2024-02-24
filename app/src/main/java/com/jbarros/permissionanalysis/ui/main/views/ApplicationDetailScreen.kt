@@ -8,6 +8,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
@@ -40,6 +42,9 @@ import com.jbarros.permissionanalysis.ui.main.interaction.ApplicationState
 fun ApplicationDetailScreen(
     onNavigate: (MainDestinations) -> Unit,
     applicationState: ApplicationState,
+    onSelectNewRiskAnalysis: () -> Unit,
+    onSelectPermissionChange: () -> Unit,
+    onSelectPermissionView:() -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -59,7 +64,8 @@ fun ApplicationDetailScreen(
             Column(
                 modifier = Modifier
                     .padding(16.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()), // Añadir el desplazamiento vertical
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Row(
@@ -93,62 +99,61 @@ fun ApplicationDetailScreen(
 
                 // Botón básico
                 Button(
-                    onClick = {onNavigate(MainDestinations.AppliedTechnique)},
+                    onClick = { onNavigate(MainDestinations.AppliedTechnique) },
                     modifier = Modifier
-                        .padding(8.dp)
+                        .padding(top=8.dp, bottom = 2.dp)
                 ) {
                     Text("Ver técnicas aplicadas")
+                }
+                // Botón básico
+                Button(
+                    onClick = { onSelectNewRiskAnalysis() },
+                    modifier = Modifier
+                        .padding(2.dp)
+                ) {
+                    Text("Actualizar permisos")
                 }
                 val context = LocalContext.current
 
                 // Botón básico
                 Button(
-                    onClick = {openAppSettings(applicationState.selectedApplication.packageName, context)},
+                    onClick = {
+                        openAppSettings(
+                            applicationState.selectedApplication.packageName,
+                            context
+                        )
+                    },
                     modifier = Modifier
-                        .padding(8.dp)
+                        .padding(2.dp)
                 ) {
                     Text("ir a editar permisos")
                 }
 
-                var selectedTabIndex by remember { mutableStateOf(0) }
-
-                TabRow(
-                    selectedTabIndex = selectedTabIndex,
-                    modifier = Modifier.padding(10.dp),
-                    backgroundColor = Color.White, // Color de fondo de la barra de pestañas
-                    contentColor = Color.Blue, // Color del texto y de los iconos de la barra de pestañas
-                    indicator = { tabPositions ->
-                        TabRowDefaults.Indicator(
-                            modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                            color = Color.White
-                        )
-                    }
+                // Botón básico
+                Button(
+                    onClick = { onNavigate(MainDestinations.PermissionsChange);onSelectPermissionChange()},
+                    modifier = Modifier
+                        .padding(2.dp)
                 ) {
-                    Tab(
-                        selected = selectedTabIndex == 0,
-                        onClick = { selectedTabIndex = 0 }
-                    ) {
-                        Text("Detalles de la App")
-                    }
-                    Tab(
-                        selected = selectedTabIndex == 1,
-                        onClick = { selectedTabIndex = 1 }
-                    ) {
-                        Text("Mostrar Permisos")
-                    }
+                    Text("Ver cambios de permisos")
+                }
+                // Botón básico
+                Button(
+                    onClick = { onNavigate(MainDestinations.PermissionDetail);onSelectPermissionView()},
+                    modifier = Modifier
+                        .padding(2.dp)
+                ) {
+                    Text("Ver Permisos")
                 }
 
+                val permissions = applicationState.permissionsNameByApp
+                Text("Cantidad permisos: ${permissions.size}")
                 Spacer(modifier = Modifier.height(16.dp))
-
-                // Contenido de la pantalla va aquí
-                // Puedes cambiar el contenido dependiendo de la pestaña seleccionada
-                when (selectedTabIndex) {
-                    0 -> ApplicationDetailComponent(
-                        applicationState.selectedApplication,
-                        applicationState.selectedPermissionAnalysis
-                    )
-                    1 -> ApplicationPermissionList(applicationPermissions = applicationState.selectedApplicationPermissions)
-                }
+                ApplicationDetailComponent(
+                    applicationState.selectedApplication,
+                    applicationState.selectedPermissionAnalysis,
+                    permissions
+                )
 
             }
         }
@@ -160,7 +165,8 @@ fun ApplicationDetailScreen(
 private fun openAppSettings(packageName: String, context: Context) {
 
     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-    intent.data = Uri.parse("package:" + packageName) // Reemplaza "BuildConfig.APPLICATION_ID" con el ID de tu aplicación
+    intent.data =
+        Uri.parse("package:" + packageName) // Reemplaza "BuildConfig.APPLICATION_ID" con el ID de tu aplicación
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
     intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
     intent.flags = Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS

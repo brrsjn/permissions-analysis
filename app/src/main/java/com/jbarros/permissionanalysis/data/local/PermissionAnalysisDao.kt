@@ -18,7 +18,7 @@ interface PermissionAnalysisDao {
     fun getByApplicationId(application_uid: Int): PermissionAnalysisEntity
 
     @Insert
-    fun insert(permissionAnalysis: PermissionAnalysisEntity)
+    fun insert(permissionAnalysis: PermissionAnalysisEntity): Long
 
     @Delete
     fun delete(permissionAnalysis: PermissionAnalysisEntity)

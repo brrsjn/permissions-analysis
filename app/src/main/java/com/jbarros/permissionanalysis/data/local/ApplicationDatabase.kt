@@ -19,4 +19,5 @@ abstract class ApplicationDatabase : RoomDatabase() {
     abstract fun permissionAnalysisDao(): PermissionAnalysisDao
     abstract fun sensitiveDataCategoryDao(): SensitiveDataCategoryDao
     abstract fun dangerousGroupDao(): DangerousGroupDao
+    abstract fun permissionChangeDao(): PermissionChangeDao
 }

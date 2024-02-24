@@ -12,21 +12,18 @@ import androidx.room.PrimaryKey
             entity = PermissionAnalysisEntity::class,
             parentColumns = arrayOf("uid"),
             childColumns = arrayOf("permission_analysis_uid"),
-            onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = ApplicationPermissionEntity::class,
             parentColumns = arrayOf("uid"),
             childColumns = arrayOf("application_permission_uid"),
-            onDelete = ForeignKey.CASCADE
         )
     ]
 )
 data class PermissionChangeEntity(
     @PrimaryKey(autoGenerate = true) val uid: Int = 0,
-    @ColumnInfo(name = "old_state") val oldState: String = "",
-    @ColumnInfo(name = "new_state") val newState: String = "",
-    @ColumnInfo(name = "created_at") val protectionLevel: String = "",
+    @ColumnInfo(name = "new_state") val newState: Boolean = false,
+    @ColumnInfo(name = "created_at") val createdAt: String = "",
     @ColumnInfo(name = "permission_analysis_uid") val permissionAnalysisUid: Int = 0,
     @ColumnInfo(name = "application_permission_uid") val applicationPermissionUid: Int = 0
 ) {

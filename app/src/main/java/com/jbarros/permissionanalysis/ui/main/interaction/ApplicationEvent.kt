@@ -11,4 +11,7 @@ sealed class ApplicationEvent {
     object ExtractApplicationList: ApplicationEvent()
     object GetDescriptions: ApplicationEvent()
     object GetPrivacyPolicies: ApplicationEvent()
+    object SelectNewRiskAnalysis: ApplicationEvent()
+    object SelectPermissionChange: ApplicationEvent()
+    object SelectPermissionView: ApplicationEvent()
 }

@@ -9,7 +9,7 @@ interface ApplicationPermissionDao {
     @Query("SELECT * FROM application_permission")
     fun getAll(): List<ApplicationPermissionEntity>
 
-    @Query("SELECT * FROM application_permission WHERE application_uid = :applicationId")
+    @Query("SELECT * FROM application_permission WHERE application_permission.application_uid = :applicationId")
     fun getAllPermissionByApplicationId(applicationId: Int): List<ApplicationPermissionEntity>
 
     @Query("SELECT sdc.name AS sensitiveDataCategoryName, p.name AS permissionName " +

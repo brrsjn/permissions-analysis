@@ -13,10 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.jbarros.permissionanalysis.domain.model.ApplicationPermission
+import com.jbarros.permissionanalysis.domain.model.Permission
+import com.jbarros.permissionanalysis.domain.model.PermissionsName
 
 
 @Composable
-fun ApplicationPermissionItem(permission: ApplicationPermission) {
+fun ApplicationPermissionItem(permission: PermissionsName) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -25,15 +27,15 @@ fun ApplicationPermissionItem(permission: ApplicationPermission) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = "Permission ID: ${permission.permissionId}", style = MaterialTheme.typography.subtitle1)
-            Text(text = "App UID: ${permission.applicationUid}", style = MaterialTheme.typography.body2)
-            Text(text = "Is Granted: ${if (permission.isGranted) "Yes" else "No"}", style = MaterialTheme.typography.body2)
+            Text(text = "${permission.name}", style = MaterialTheme.typography.subtitle1)
+            Text(text = "${permission.constantName}", style = MaterialTheme.typography.body2)
             // Optionally, you can format and show the dates
             permission.createdAt?.let {
                 Text(text = "Created At: $it", style = MaterialTheme.typography.caption)
             }
-            permission.updatedAt?.let {
-                Text(text = "Updated At: $it", style = MaterialTheme.typography.caption)
+            if (permission.updatedAt != "") {
+                Text(text = "Updated At: ${permission.updatedAt}", style = MaterialTheme.typography.caption)
+
             }
         }
         if (permission.isGranted) {

@@ -12,7 +12,6 @@ import androidx.room.PrimaryKey
             entity = ApplicationEntity::class,
             parentColumns = arrayOf("uid"),
             childColumns = arrayOf("application_id"),
-            onDelete = ForeignKey.CASCADE
         )]
     )
 data class PrivacyPolicyEntity(

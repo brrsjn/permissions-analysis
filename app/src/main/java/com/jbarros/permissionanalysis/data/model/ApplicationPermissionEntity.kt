@@ -12,13 +12,11 @@ import androidx.room.PrimaryKey
             entity = ApplicationEntity::class,
             parentColumns = arrayOf("uid"),
             childColumns = arrayOf("application_uid"),
-            onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = PermissionEntity::class,
             parentColumns = arrayOf("uid"),
             childColumns = arrayOf("permission_uid"),
-            onDelete = ForeignKey.CASCADE
         )
     ]
 )

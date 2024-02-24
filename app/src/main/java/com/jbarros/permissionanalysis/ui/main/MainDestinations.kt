@@ -9,4 +9,5 @@ sealed class MainDestinations(var route: String) {
     object RiskAnalysis: MainDestinations(route = "riskAnalysis")
     object PermissionDetail: MainDestinations(route = "permissionDetail/{permissionId}")
     object PermissionsList: MainDestinations(route = "permissionsList")
+    object PermissionsChange: MainDestinations(route = "permissionsChange")
 }

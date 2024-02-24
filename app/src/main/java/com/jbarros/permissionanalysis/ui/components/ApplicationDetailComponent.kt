@@ -13,11 +13,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import com.jbarros.permissionanalysis.domain.model.Application
 import com.jbarros.permissionanalysis.domain.model.PermissionAnalysis
+import com.jbarros.permissionanalysis.domain.model.PermissionsName
 
 @Composable
 fun ApplicationDetailComponent(
     application: Application,
-    permissionAnalysis: PermissionAnalysis
+    permissionAnalysis: PermissionAnalysis,
+    permissionsName: List<PermissionsName>
+
 ) {
     Column(
         modifier = Modifier
@@ -25,14 +28,13 @@ fun ApplicationDetailComponent(
             .fillMaxWidth()
     ) {
         Text(text = "ID: ${application.id}")
-        Text(text = "Unique User ID: ${application.uniqueUserId}")
         Text(text = "Package Name: ${application.packageName}")
         Text(text = "App Name: ${application.appName}")
         Text(text = "Created At: ${application.createdAt}")
-        //Text(text = "APK Path: ${application.apkPath}")
+        Text(text = "Total permisos ${permissionsName.size}")
         Text(text = "Nivel de riesgo otorgado: ${permissionAnalysis.riskScore}")
         Text(text = "Nivel de riesgo aplicacion: ${permissionAnalysis.riskScoreRequested}")
-        Text(text = "Fecha Nivel de riesgo: ${permissionAnalysis.createdAt}")
+        Text(text = "Fecha Ultimo analisis de permisos: ${permissionAnalysis.createdAt}")
     }
 
 

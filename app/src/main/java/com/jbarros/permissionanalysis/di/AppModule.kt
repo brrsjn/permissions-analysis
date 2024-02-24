@@ -86,6 +86,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun providesPermissionChangeDao(applicationDatabase: ApplicationDatabase): PermissionChangeDao = applicationDatabase.permissionChangeDao()
+
+
+
+    @Provides
+    @Singleton
     fun providesPackageManagerSource(@ApplicationContext app: Context): PackageManagerSource {
         return PackageManagerSource(app)
     }

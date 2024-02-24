@@ -51,7 +51,7 @@ fun ApplicationCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
-                    modifier = Modifier.weight(1f) // Esto permite que el texto ocupe todo el espacio disponible
+                    modifier = Modifier.weight(1f)
                 ) {
                     Text(
                         text = app.appName,

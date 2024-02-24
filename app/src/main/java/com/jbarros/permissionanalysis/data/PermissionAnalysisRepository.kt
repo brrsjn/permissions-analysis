@@ -8,7 +8,7 @@ import javax.inject.Inject
 class PermissionAnalysisRepository @Inject constructor(
     private val permissionAnalysisDao: PermissionAnalysisDao,
     private val packageManagerDataSource: PackageManagerSource
-){
+) {
     fun count(): Int {
         return permissionAnalysisDao.count()
     }
@@ -33,7 +33,7 @@ class PermissionAnalysisRepository @Inject constructor(
         return permissionAnalysisDao.getAllByApplicationId(applicationId)
     }
 
-    fun insertPermissionAnalysis(permissionAnalysisEntity: PermissionAnalysisEntity){
-        permissionAnalysisDao.insert(permissionAnalysis = permissionAnalysisEntity )
+    fun insertPermissionAnalysis(permissionAnalysisEntity: PermissionAnalysisEntity): Long {
+        return permissionAnalysisDao.insert(permissionAnalysis = permissionAnalysisEntity)
     }
 }

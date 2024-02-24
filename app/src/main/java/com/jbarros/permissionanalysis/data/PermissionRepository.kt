@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class PermissionRepository @Inject constructor(
     private val permissionDao: PermissionDao,
-){
+) {
     fun getAllPermission(): List<PermissionEntity> {
         return permissionDao.getAll()
     }
@@ -22,7 +22,16 @@ class PermissionRepository @Inject constructor(
     fun insertPermission(permissionEntity: PermissionEntity) {
         permissionDao.insert(permission = permissionEntity)
     }
-    fun getDangerous(): List<PermissionEntity>{
+
+    fun getDangerous(): List<PermissionEntity> {
         return permissionDao.getDangerous()
+    }
+
+    fun getConstantName(permissionId: Int): String {
+        return permissionDao.getConstantName(permissionId)
+    }
+
+    fun getByIdList(permissionIdList: List<Int>): List<PermissionEntity> {
+        return permissionDao.getByIdList(permissionIdList)
     }
 }

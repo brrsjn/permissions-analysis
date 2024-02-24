@@ -8,20 +8,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jbarros.permissionanalysis.domain.model.ApplicationPermission
+import com.jbarros.permissionanalysis.domain.model.Permission
+import com.jbarros.permissionanalysis.domain.model.PermissionsName
 
 @Composable
 fun ApplicationPermissionList(
     modifier: Modifier = Modifier,
-    applicationPermissions: List<ApplicationPermission>,
+    permissionsName: List<PermissionsName>
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 175.dp), modifier = modifier.fillMaxSize()
     ) {
 
-        items(items = applicationPermissions) { app ->
-                ApplicationPermissionItem(permission = app)
+        items(items = permissionsName) { appPer ->
+                ApplicationPermissionItem(appPer)
         }
-
-
     }
 }

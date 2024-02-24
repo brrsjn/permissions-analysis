@@ -14,8 +14,7 @@ interface PermissionDao {
     @Query("SELECT uid FROM permission WHERE constant_name = :name")
     fun getIdByName(name: String): Int
 
-
-    @Query("SELECT * FROM permission p LEFT JOIN application_permission ap ON ap.permission_uid = p.uid WHERE ap.application_uid = :applicationId")
+    @Query("SELECT p.uid, p.name, p.description, p.protection_level, p.constant_name, p.sensitive_data_category_uid, p.dangerous_group_uid FROM permission p LEFT JOIN application_permission ap ON ap.permission_uid = p.uid WHERE ap.application_uid = :applicationId")
     fun getAllByApplicationId(applicationId: Int): List<PermissionEntity>
 
     @Insert
@@ -26,4 +25,10 @@ interface PermissionDao {
 
     @Update
     fun update(permission: PermissionEntity)
+
+    @Query("SELECT constant_name FROM permission WHERE uid = :permissionId")
+    fun getConstantName(permissionId: Int): String
+
+    @Query("SELECT * FROM permission WHERE uid IN (:listIds)")
+    fun getByIdList(listIds: List<Int>): List<PermissionEntity>
 }
