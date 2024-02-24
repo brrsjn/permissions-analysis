@@ -1,9 +1,16 @@
 package com.jbarros.permissionanalysis.ui.main.views
 
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -27,16 +34,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
+import com.jbarros.permissionanalysis.R
 import com.jbarros.permissionanalysis.ui.components.ApplicationDetailComponent
-import com.jbarros.permissionanalysis.ui.components.ApplicationPermissionList
-import com.jbarros.permissionanalysis.ui.components.PermissionList
+
 import com.jbarros.permissionanalysis.ui.main.LoadingScreen
 import com.jbarros.permissionanalysis.ui.main.MainDestinations
 import com.jbarros.permissionanalysis.ui.main.interaction.ApplicationState
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
 
 @Composable
 fun ApplicationDetailScreen(
@@ -44,7 +62,8 @@ fun ApplicationDetailScreen(
     applicationState: ApplicationState,
     onSelectNewRiskAnalysis: () -> Unit,
     onSelectPermissionChange: () -> Unit,
-    onSelectPermissionView:() -> Unit
+    onSelectPermissionView: () -> Unit,
+    onSelectDownloadReport: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -101,7 +120,7 @@ fun ApplicationDetailScreen(
                 Button(
                     onClick = { onNavigate(MainDestinations.AppliedTechnique) },
                     modifier = Modifier
-                        .padding(top=8.dp, bottom = 2.dp)
+                        .padding(top = 8.dp, bottom = 2.dp)
                 ) {
                     Text("Ver técnicas aplicadas")
                 }
@@ -131,7 +150,7 @@ fun ApplicationDetailScreen(
 
                 // Botón básico
                 Button(
-                    onClick = { onNavigate(MainDestinations.PermissionsChange);onSelectPermissionChange()},
+                    onClick = { onNavigate(MainDestinations.PermissionsChange);onSelectPermissionChange() },
                     modifier = Modifier
                         .padding(2.dp)
                 ) {
@@ -139,15 +158,23 @@ fun ApplicationDetailScreen(
                 }
                 // Botón básico
                 Button(
-                    onClick = { onNavigate(MainDestinations.PermissionDetail);onSelectPermissionView()},
+                    onClick = { onNavigate(MainDestinations.PermissionDetail);onSelectPermissionView() },
                     modifier = Modifier
                         .padding(2.dp)
                 ) {
                     Text("Ver Permisos")
                 }
 
+                // Botón básico
+                Button(
+                    onClick = {onSelectDownloadReport() },
+                    modifier = Modifier
+                        .padding(2.dp)
+                ) {
+                    Text("Descargar informe aplicacion")
+                }
+
                 val permissions = applicationState.permissionsNameByApp
-                Text("Cantidad permisos: ${permissions.size}")
                 Spacer(modifier = Modifier.height(16.dp))
                 ApplicationDetailComponent(
                     applicationState.selectedApplication,

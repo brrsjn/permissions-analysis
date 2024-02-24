@@ -14,4 +14,5 @@ sealed class ApplicationEvent {
     object SelectNewRiskAnalysis: ApplicationEvent()
     object SelectPermissionChange: ApplicationEvent()
     object SelectPermissionView: ApplicationEvent()
+    object SelectDownloadReport: ApplicationEvent()
 }

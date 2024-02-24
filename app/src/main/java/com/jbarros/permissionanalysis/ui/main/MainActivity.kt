@@ -13,6 +13,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -21,6 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.jbarros.permissionanalysis.domain.initializer.FirstRun
+import com.jbarros.permissionanalysis.services.SchedulerRiskAnalysisService
 import com.jbarros.permissionanalysis.ui.main.interaction.ApplicationEvent
 import com.jbarros.permissionanalysis.ui.main.interaction.PermissionEvent
 import com.jbarros.permissionanalysis.ui.main.viewmodels.ApplicationViewModel
@@ -42,6 +44,7 @@ class MainActivity : ComponentActivity() {
 
         val prefs = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val isFirstRun = prefs.getBoolean("isFirstRun", true)
+
 
         if (isFirstRun) {
             // Mostrar una pantalla de carga aquí
@@ -121,6 +124,10 @@ private fun content() {
                 },onSelectPermissionView = {
                     applicationViewModel.onEvent(
                         ApplicationEvent.SelectPermissionView
+                    )
+                }, onSelectDownloadReport = {
+                    applicationViewModel.onEvent(
+                        ApplicationEvent.SelectDownloadReport
                     )
                 }
             )

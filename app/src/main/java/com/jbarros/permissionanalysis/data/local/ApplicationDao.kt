@@ -8,8 +8,8 @@ interface ApplicationDao {
     @Query("SELECT * FROM application")
     fun getAll(): List<ApplicationEntity>
 
-    @Query("SELECT * FROM application WHERE uid = :applicationId")
-    fun getOne(applicationId: Int): List<ApplicationEntity>
+    @Query("SELECT * FROM application WHERE uid = :applicationId LIMIT 1")
+    fun getOne(applicationId: Int): ApplicationEntity
 
     @Insert
     fun insert(application: ApplicationEntity)

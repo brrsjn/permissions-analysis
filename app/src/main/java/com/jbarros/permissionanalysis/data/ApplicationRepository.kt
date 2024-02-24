@@ -11,6 +11,10 @@ class ApplicationRepository @Inject constructor(
         return applicationDao.getAll()
     }
 
+    fun getOne(applicationId: Int): ApplicationEntity {
+        return applicationDao.getOne(applicationId)
+    }
+
     fun insertApplication(applicationEntity: ApplicationEntity){
         applicationDao.insert(application = applicationEntity)
     }

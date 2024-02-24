@@ -12,9 +12,11 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jbarros.permissionanalysis.domain.model.Application
+import com.jbarros.permissionanalysis.services.SchedulerRiskAnalysisService
 import com.jbarros.permissionanalysis.ui.components.ApplicationList
 import com.jbarros.permissionanalysis.ui.components.StartAnalysisButton
 import com.jbarros.permissionanalysis.ui.main.MainDestinations
@@ -37,6 +39,8 @@ fun HomeScreen(
             )
         }
     ) {
+        SchedulerRiskAnalysisService.scheduleJob(LocalContext.current)
+
         val totalApplications = applicationState.applications.size
         Column(modifier = Modifier.padding(it)) {
             Text(

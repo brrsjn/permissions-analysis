@@ -49,6 +49,12 @@ android {
 }
 
 dependencies {
+    //Work
+    implementation "androidx.work:work-runtime-ktx:2.7.0" // Para utilizar Worker en lugar de JobService
+
+    // Gson for Json documents
+    implementation 'com.google.code.gson:gson:2.8.9'
+
 
     // hilt compose navigation
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
@@ -86,6 +92,7 @@ dependencies {
     def lifecycle_version = "2.4.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-service:$lifecycle_version" // Para obtener Lifecycle en JobService
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
     implementation 'androidx.activity:activity-compose:1.7.2'

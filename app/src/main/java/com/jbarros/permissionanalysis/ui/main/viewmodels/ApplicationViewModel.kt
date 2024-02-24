@@ -1,16 +1,25 @@
 package com.jbarros.permissionanalysis.ui.main.viewmodels
 
 import android.content.ContentValues.TAG
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Environment
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.jbarros.permissionanalysis.domain.applicationpermission.GetApplicationPermissionByApp
 import com.jbarros.permissionanalysis.domain.applications.GetApplications
 import com.jbarros.permissionanalysis.domain.descriptions.GetDescriptions
+import com.jbarros.permissionanalysis.domain.exportData.ExportFileData
 import com.jbarros.permissionanalysis.domain.model.Application
+import com.jbarros.permissionanalysis.domain.model.ExportData
 import com.jbarros.permissionanalysis.domain.model.PermissionChangeStrings
 import com.jbarros.permissionanalysis.domain.model.PermissionsName
 import com.jbarros.permissionanalysis.domain.permission.GetPermissionsById
@@ -24,9 +33,14 @@ import com.jbarros.permissionanalysis.ui.main.interaction.ApplicationEvent
 import com.jbarros.permissionanalysis.ui.main.interaction.ApplicationState
 import com.jbarros.permissionanalysis.utils.PackageManagerSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileWriter
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,7 +55,9 @@ class ApplicationViewModel @Inject constructor(
     private val newAppPermissionAnalysis: NewAppPermissionAnalysis,
     private val getPermissionChanges: GetPermissionChanges,
     private val getPermissionsById: GetPermissionsById,
-    private val getPermissionsNameById: GetPermissionsNameById
+    private val getPermissionsNameById: GetPermissionsNameById,
+    private val exportFileData: ExportFileData,
+    @ApplicationContext private val context:Context
 ) : ViewModel() {
     private val _state: MutableState<ApplicationState> = mutableStateOf(ApplicationState())
     val state: State<ApplicationState> get() = _state
@@ -91,6 +107,9 @@ class ApplicationViewModel @Inject constructor(
             }
             is ApplicationEvent.SelectPermissionView -> {
                 onSelectPermissions(state.value.selectedApplication.id)
+            }
+            is ApplicationEvent.SelectDownloadReport -> {
+                saveAndShareJson()
             }
 
         }
@@ -202,6 +221,7 @@ class ApplicationViewModel @Inject constructor(
             newAppPermissionAnalysis.invoke(_state.value.selectedApplication)
             //Logica de nuevo analizis
             withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Nuevo Analisis completado.", Toast.LENGTH_LONG).show()
                 //Actualizacion a la vista
             }
         }
@@ -224,10 +244,65 @@ class ApplicationViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val permissions = getPermissionsNameById.invoke(applicationId)
             withContext(Dispatchers.Main) {
+
                 //Actualizacion a la vista
                 _state.value =
                     _state.value.copy(permissionsNameByApp = permissions)
             }
         }
+    }
+
+    private fun saveAndShareJson() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val data = exportFileData.invoke(applicationId = state.value.selectedApplication.id)
+            val file = saveDataToFile(data)
+            withContext(Dispatchers.Main) {
+                shareJsonFile(file)
+                Toast.makeText(context, "JSON file saved.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun saveDataToFile(dataList: ExportData): File {
+        val gson = Gson()
+        val jsonData = gson.toJson(dataList)
+        // Obtén la fecha actual en el formato deseado para el nombre del archivo
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val packageName = state.value.selectedApplication.packageName.replace('.', '_')
+
+        // Combina la fecha con el nombre del archivo
+        val fileName = "${packageName}_$timeStamp.json"
+        val folder: File? = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+        val file = File(folder, fileName)
+
+        try {
+            FileWriter(file).use { writer ->
+                writer.write(jsonData)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return file
+    }
+
+    private fun shareJsonFile(file: File) {
+        val fileUri: Uri = FileProvider.getUriForFile(
+            context,
+            "com.jbarros.permissionanalysis.fileprovider",
+            file
+        )
+
+        val shareIntent = getShareIntent(fileUri)
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) // Add this flag
+        context.startActivity(shareIntent)
+    }
+
+    private fun getShareIntent(fileUri: Uri): Intent {
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
+        shareIntent.type = "application/json"
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        return Intent.createChooser(shareIntent, "Compartir archivo JSON")
     }
 }
