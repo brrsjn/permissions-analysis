@@ -20,7 +20,10 @@ class ApplicationRepository @Inject constructor(
     }
 
 
-    fun getApplicationIdByPackageName(packageName: String): Int {
+    fun getApplicationIdByPackageName(packageName: String): ApplicationEntity {
         return applicationDao.getApplicationIdByPackageName(packageName = packageName)
+    }
+    fun update(applicationEntity: ApplicationEntity) {
+        applicationDao.update(applicationEntity)
     }
 }

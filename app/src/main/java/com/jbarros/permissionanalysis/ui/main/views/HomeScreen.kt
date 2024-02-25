@@ -2,6 +2,7 @@ package com.jbarros.permissionanalysis.ui.main.views
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -29,6 +30,7 @@ fun HomeScreen(
     onNavigate: (MainDestinations) -> Unit,
     applicationState: ApplicationState,
     onSelectedApp: (Application) -> Unit,
+    onSelectNewRiskAnalysisToAllApps: () -> Unit
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -46,13 +48,26 @@ fun HomeScreen(
             Text(
                 text = "Resultados del análisis ",
                 style = MaterialTheme.typography.h5,
-                modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 50.dp)
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 50.dp)
             )
             Text(
                 text = "$totalApplications aplicaciones analizadas",
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
+            // Botón básico
+            Button(
+                onClick = { onSelectNewRiskAnalysisToAllApps() },
+                modifier = Modifier
+                    .padding(2.dp)
+                    .fillMaxWidth()
+            ) {
+                Text("Actualizar análisis")
+            }
+
+
             ApplicationList(
                 modifier = Modifier.padding(it),
                 apps = applicationState.applications,
@@ -68,7 +83,9 @@ fun FakeHomeScreen() {
         HomeScreen(
             onNavigate = {},
             applicationState = ApplicationState(),
-            onSelectedApp = {})
+            onSelectedApp = {},
+            onSelectNewRiskAnalysisToAllApps = {}
+        )
     }
 }
 

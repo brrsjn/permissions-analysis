@@ -19,8 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PermissionAnalysis"
-        tools:targetApi="31"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
@@ -48,6 +48,14 @@
         <service
             android:name=".services.RiskAnalysisService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+        <receiver
+            android:name="receiver.PackageChangeReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

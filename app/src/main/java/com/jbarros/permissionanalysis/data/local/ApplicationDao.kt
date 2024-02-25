@@ -5,7 +5,7 @@ import com.jbarros.permissionanalysis.data.model.ApplicationEntity
 
 @Dao
 interface ApplicationDao {
-    @Query("SELECT * FROM application")
+    @Query("SELECT * FROM application WHERE deleted_at IS NULL")
     fun getAll(): List<ApplicationEntity>
 
     @Query("SELECT * FROM application WHERE uid = :applicationId LIMIT 1")
@@ -20,6 +20,6 @@ interface ApplicationDao {
     @Update
     fun update(application: ApplicationEntity)
 
-    @Query("SELECT application.uid FROM application WHERE application.package_name = :packageName LIMIT 1")
-    fun getApplicationIdByPackageName(packageName: String): Int
+    @Query("SELECT * FROM application WHERE application.package_name = :packageName LIMIT 1")
+    fun getApplicationIdByPackageName(packageName: String): ApplicationEntity
 }

@@ -95,7 +95,7 @@ fun AppliedTechniqueScreen(
             Button(
                 onClick = {onNavigate(MainDestinations.RiskAnalysis);onRiskAnalysisSelect()},
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(8.dp).fillMaxWidth()
             ) {
                 Text("Ver analisis de riesgo")
             }
@@ -104,7 +104,7 @@ fun AppliedTechniqueScreen(
             Button(
                 onClick = {onNavigate(MainDestinations.DescriptionAnalysis);onDescriptionsSelect()},
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(8.dp).fillMaxWidth()
             ) {
                 Text("Ver analisis descripcion")
             }
@@ -113,7 +113,7 @@ fun AppliedTechniqueScreen(
             Button(
                 onClick = {onNavigate(MainDestinations.PrivacyPoliciesSummary);onPrivacyPoliciesSelect()},
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(8.dp).fillMaxWidth()
             ) {
                 Text("Ver resumen politica de privacidad")
             }

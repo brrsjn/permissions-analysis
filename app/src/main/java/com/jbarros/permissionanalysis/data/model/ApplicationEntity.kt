@@ -13,5 +13,5 @@ data class ApplicationEntity(
     @ColumnInfo(name = "app_name") val appName: String,
     @ColumnInfo(name = "apk_path") val apkPath: String,
     @ColumnInfo(name = "created_at") val createdAt: String,
-    @ColumnInfo(name = "deleted_at") val deletedAt: String? = null,
+    @ColumnInfo(name = "deleted_at") var deletedAt: String? = null,
 )

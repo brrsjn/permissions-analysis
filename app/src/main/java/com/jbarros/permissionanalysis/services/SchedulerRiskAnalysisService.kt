@@ -30,8 +30,8 @@ object SchedulerRiskAnalysisService {
         val currentTime = System.currentTimeMillis()
         val calendar = java.util.Calendar.getInstance()
         calendar.timeInMillis = currentTime
-        calendar.set(java.util.Calendar.HOUR_OF_DAY, 5)
-        calendar.set(java.util.Calendar.MINUTE, 14)
+        calendar.set(java.util.Calendar.HOUR_OF_DAY, 3)
+        calendar.set(java.util.Calendar.MINUTE, 0)
         calendar.set(java.util.Calendar.SECOND, 0)
 
         if (calendar.timeInMillis <= currentTime) {

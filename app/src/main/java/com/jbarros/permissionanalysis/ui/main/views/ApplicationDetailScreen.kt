@@ -20,10 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.MailOutline
-import androidx.compose.material.icons.filled.Send
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -115,44 +112,33 @@ fun ApplicationDetailScreen(
                         )
                     }
                 }
-
+                val permissions = applicationState.permissionsNameByApp
+                Spacer(modifier = Modifier.height(16.dp))
+                ApplicationDetailComponent(
+                    applicationState.selectedApplication,
+                    applicationState.selectedPermissionAnalysis,
+                    permissions
+                )
                 // Botón básico
                 Button(
                     onClick = { onNavigate(MainDestinations.AppliedTechnique) },
                     modifier = Modifier
                         .padding(top = 8.dp, bottom = 2.dp)
+                        .fillMaxWidth()
                 ) {
                     Text("Ver técnicas aplicadas")
                 }
-                // Botón básico
-                Button(
-                    onClick = { onSelectNewRiskAnalysis() },
-                    modifier = Modifier
-                        .padding(2.dp)
-                ) {
-                    Text("Actualizar permisos")
-                }
+
                 val context = LocalContext.current
 
-                // Botón básico
-                Button(
-                    onClick = {
-                        openAppSettings(
-                            applicationState.selectedApplication.packageName,
-                            context
-                        )
-                    },
-                    modifier = Modifier
-                        .padding(2.dp)
-                ) {
-                    Text("ir a editar permisos")
-                }
+                CustomAlertDialogUpdatePermission(context = context, packageName = applicationState.selectedApplication.packageName)
 
                 // Botón básico
                 Button(
                     onClick = { onNavigate(MainDestinations.PermissionsChange);onSelectPermissionChange() },
                     modifier = Modifier
                         .padding(2.dp)
+                        .fillMaxWidth()
                 ) {
                     Text("Ver cambios de permisos")
                 }
@@ -161,32 +147,104 @@ fun ApplicationDetailScreen(
                     onClick = { onNavigate(MainDestinations.PermissionDetail);onSelectPermissionView() },
                     modifier = Modifier
                         .padding(2.dp)
+                        .fillMaxWidth()
                 ) {
                     Text("Ver Permisos")
                 }
 
                 // Botón básico
                 Button(
-                    onClick = {onSelectDownloadReport() },
+                    onClick = { onSelectDownloadReport() },
                     modifier = Modifier
                         .padding(2.dp)
+                        .fillMaxWidth()
                 ) {
                     Text("Descargar informe aplicacion")
                 }
+                // Botón básico
+                Button(
+                    onClick = { onSelectNewRiskAnalysis() },
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .fillMaxWidth()
+                ) {
+                    Text("Actualizar permisos")
+                }
 
-                val permissions = applicationState.permissionsNameByApp
-                Spacer(modifier = Modifier.height(16.dp))
-                ApplicationDetailComponent(
-                    applicationState.selectedApplication,
-                    applicationState.selectedPermissionAnalysis,
-                    permissions
-                )
 
             }
         }
 
     }
 
+}
+
+
+@Composable
+fun CustomAlertDialogUpdatePermission(
+    context: Context,
+    packageName: String
+) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                // Handle dismiss action
+                showDialog = false
+            },
+            title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Warning,
+                        contentDescription = null,
+                        tint = Color.Red
+                    )
+                    Text(text = "Saldrás de la aplicación")
+                }
+            },
+            text = {
+                Text(text = "Saldrás de la aplicación e irás a configuración a actualizar los permisos")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        // Handle confirm action
+                        showDialog = false; openAppSettings(
+                        packageName,
+                        context
+                    )
+                    }
+                ) {
+                    Text("Ir")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        // Handle dismiss action
+                        showDialog = false
+                    }
+                ) {
+                    Text("Quedarme")
+                }
+            },
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+
+    // The button to trigger the dialog
+    Button(modifier = Modifier.padding(2.dp).fillMaxWidth()
+        ,
+        onClick = {
+            showDialog = true
+        }
+    ) {
+        Text("Ir a editar permisos")
+    }
 }
 
 private fun openAppSettings(packageName: String, context: Context) {

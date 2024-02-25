@@ -10,15 +10,18 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.graphics.drawable.toBitmap
 import com.jbarros.permissionanalysis.ui.main.MainDestinations
@@ -83,8 +86,10 @@ fun PrivacyPoliciesSummaryScreen(
             val privacyPolicies = applicationState.applicationPrivacyPolicies
 
             if (privacyPolicies.link != "") {
-                OpenLinkInBrowser(privacyPolicies.link)
+                //OpenLinkInBrowser(privacyPolicies.link, "Abrir Politica de privacidad")
+                CustomAlertDialogGoToPrivacyPolicy(link = privacyPolicies.link)
             }
+
 
             PrivacyPolicyItem("Policy Introductory", privacyPolicies.policy_introductory)
             PrivacyPolicyItem(
@@ -125,7 +130,7 @@ fun PrivacyPoliciesSummaryScreen(
 }
 
 @Composable
-fun OpenLinkInBrowser(link: String) {
+fun OpenLinkInBrowser(link: String, text: String) {
     val context = LocalContext.current
 
     Button(
@@ -138,7 +143,7 @@ fun OpenLinkInBrowser(link: String) {
             .padding(16.dp)
             .fillMaxWidth()
     ) {
-        Text(text = "Abrir politica de privacidad")
+        Text(text = text)
     }
 }
 
@@ -151,6 +156,79 @@ fun PrivacyPolicyItem(title: String, content: String) {
     ) {
         Text(text = title, style = MaterialTheme.typography.h6)
         Text(text = content, style = MaterialTheme.typography.body1)
+    }
+}
+
+@Composable
+fun CustomAlertDialogGoToPrivacyPolicy(
+    link: String
+) {
+    var showDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                // Handle dismiss action
+                showDialog = false
+            },
+            title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Warning,
+                        contentDescription = null,
+                        tint = Color.Red
+                    )
+                    Text(text = "Saldrás de la aplicación")
+                }
+            },
+            text = {
+                Text(text = "Saldrás de la aplicación e irás a pagina web del fabricante.")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDialog = false
+                        // Utilizar un Intent para abrir el enlace en el navegador
+                        val intent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(link)
+                        )
+                        ContextCompat.startActivity(context, intent, null)
+                    },
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                ) {
+                    Text(text = "Ir")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        // Handle dismiss action
+                        showDialog = false
+                    }
+                ) {
+                    Text("Quedarme")
+                }
+            },
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+
+    // The button to trigger the dialog
+    Button(modifier = Modifier
+        .padding(2.dp)
+        .fillMaxWidth(),
+        onClick = {
+            showDialog = true
+        }
+    ) {
+        Text("Abrir Politica de privacidad")
     }
 }
 

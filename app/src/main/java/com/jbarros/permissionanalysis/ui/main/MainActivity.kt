@@ -105,6 +105,10 @@ private fun content() {
                             application = application
                         )
                     )
+                }, onSelectNewRiskAnalysisToAllApps = {
+                    applicationViewModel.onEvent(
+                        ApplicationEvent.SelectNewRiskAnalysisToAllApps
+                    )
                 })
         }
         composable(MainDestinations.ApplicationDetail.route) {

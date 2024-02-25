@@ -3,7 +3,6 @@ package com.jbarros.permissionanalysis.services
 import android.annotation.SuppressLint
 import android.app.job.JobParameters
 import android.app.job.JobService
-import android.content.Intent
 import android.os.Handler
 import android.os.Message
 import android.widget.Toast

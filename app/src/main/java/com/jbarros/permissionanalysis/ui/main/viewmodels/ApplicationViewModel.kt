@@ -27,6 +27,7 @@ import com.jbarros.permissionanalysis.domain.permission.GetPermissionsNameById
 import com.jbarros.permissionanalysis.domain.permissionChange.GetPermissionChanges
 import com.jbarros.permissionanalysis.domain.permissionanalysis.GetPermissionAnalysis
 import com.jbarros.permissionanalysis.domain.permissionanalysis.NewAppPermissionAnalysis
+import com.jbarros.permissionanalysis.domain.permissionanalysis.NewPermissionAnalysis
 import com.jbarros.permissionanalysis.domain.privacyPolicies.GetPrivacyPolicies
 import com.jbarros.permissionanalysis.domain.riskAnalysis.GetSensitiveDataCategoryAndPermission
 import com.jbarros.permissionanalysis.ui.main.interaction.ApplicationEvent
@@ -57,7 +58,8 @@ class ApplicationViewModel @Inject constructor(
     private val getPermissionsById: GetPermissionsById,
     private val getPermissionsNameById: GetPermissionsNameById,
     private val exportFileData: ExportFileData,
-    @ApplicationContext private val context:Context
+    @ApplicationContext private val context: Context,
+    private val newPermissionAnalysis: NewPermissionAnalysis
 ) : ViewModel() {
     private val _state: MutableState<ApplicationState> = mutableStateOf(ApplicationState())
     val state: State<ApplicationState> get() = _state
@@ -110,6 +112,9 @@ class ApplicationViewModel @Inject constructor(
             }
             is ApplicationEvent.SelectDownloadReport -> {
                 saveAndShareJson()
+            }
+            is ApplicationEvent.SelectNewRiskAnalysisToAllApps -> {
+                onSelectNewRiskAnalysisToAllApps()
             }
 
         }
@@ -304,5 +309,16 @@ class ApplicationViewModel @Inject constructor(
         shareIntent.type = "application/json"
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         return Intent.createChooser(shareIntent, "Compartir archivo JSON")
+    }
+
+    private fun onSelectNewRiskAnalysisToAllApps() {
+        viewModelScope.launch(Dispatchers.IO) {
+            newPermissionAnalysis.invoke()
+            collectApplications()
+            withContext(Dispatchers.Main) {
+
+                Toast.makeText(context, "Actualizado el listado de apps y análisis de riesgo.", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }
