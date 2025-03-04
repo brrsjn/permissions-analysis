@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Set up JDK
         uses: actions/setup-java@v2
@@ -22,7 +22,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Cache Gradle dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
@@ -38,7 +38,7 @@ jobs:
         run: ./gradlew assembleRelease
 
       - name: Upload APK as an artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v2
         with:
           name: android-apk
           path: app/build/outputs/apk/release/app-release.apk
