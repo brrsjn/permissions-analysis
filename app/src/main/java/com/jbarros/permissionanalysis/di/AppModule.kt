@@ -36,7 +36,7 @@ object AppModule {
     @Provides
     @Singleton
     fun providesRetrofitPermissionExtractInfoService(): PermissionsAnalysisAPIService {
-        val baseUrl = "http://54.159.150.207:8080/api/"
+        val baseUrl = "http://54.159.150.207/api/"
         val moshi = Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()
